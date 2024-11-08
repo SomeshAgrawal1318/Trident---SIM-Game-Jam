@@ -104,3 +104,41 @@ magic_fx.set_volume(0.75)
 
 
 bg_image = pygame.image.load("Assets/Background.png").convert_alpha()
+  if intro_count <= 0:
+    #move fighters
+    fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
+    fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
+  else:
+    #display count timer
+    draw_text(str(intro_count), count_font, RED, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
+    #update count timer
+    if (pygame.time.get_ticks() - last_count_update) >= 1000:
+      intro_count -= 1
+      last_count_update = pygame.time.get_ticks()
+
+  #update fighters
+  fighter_1.update()
+  fighter_2.update()
+
+  #draw fighters
+  fighter_1.draw(screen)
+  fighter_2.draw(screen)
+
+  #check for player defeat
+  if round_over == False:
+    if fighter_1.alive == False:
+      score[1] += 1
+      round_over = True
+      round_over_time = pygame.time.get_ticks()
+    elif fighter_2.alive == False:
+      score[0] += 1
+      round_over = True
+      round_over_time = pygame.time.get_ticks()
+  else:
+    #display victory image
+    screen.blit(victory, (360, 150))
+    if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
+      round_over = False
+      intro_count = 3
+      fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
+      fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
