@@ -61,30 +61,30 @@ Game().run()
 mixer.init()
 pygame.init()
 
-#create game window
+
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Zygos rahhhhh (Keyboard dedo)")
 
-#set framerate
+#frame rate
 clock = pygame.time.Clock()
 FPS = 60
 
-#define colours
+
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
 
-#define game variables
+
 intro_count = 3
 last_count_update = pygame.time.get_ticks()
-score = [0, 0]#player scores. [P1, P2]
+score = [0, 0]
 round_over = False
 ROUND_OVER_COOLDOWN = 2000
 
-#define fighter variables
+
 WARRIOR_SIZE = 162
 WARRIOR_SCALE = 4
 WARRIOR_OFFSET = [72, 56]
@@ -94,7 +94,6 @@ WIZARD_SCALE = 3
 WIZARD_OFFSET = [112, 107]
 WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 
-#load music and sounds
 pygame.mixer.music.load("Assets/music_bakchodi.mp3")
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1, 0.0, 5000)
@@ -103,5 +102,5 @@ sword_fx.set_volume(0.5)
 magic_fx = pygame.mixer.Sound("Assets/magic.wav")
 magic_fx.set_volume(0.75)
 
-#load background image
+
 bg_image = pygame.image.load("Assets/Background.png").convert_alpha()
