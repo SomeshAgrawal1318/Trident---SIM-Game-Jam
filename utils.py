@@ -4,16 +4,38 @@ import pygame
 
 BASE_IMG_PATH = 'data/images/'
 
-def load_image(path):
+def load_image(path, enemy=0):
+    """
+    Load and scale a single image from the specified path.
+
+    Args:
+        path (str): Relative path to the image file within the base directory.
+
+    Returns:
+        pygame.Surface: Loaded and scaled image with transparent background set.
+    """
     img = pygame.image.load(BASE_IMG_PATH + path).convert()
-    img.set_colorkey((0, 0, 0))
+    img.set_colorkey((0, 0, 0))  # Set the black color as transparent
+    if enemy == 1:
+        img = pygame.transform.scale(img, (25, 30))  # Scale the image to 30x30 pixels
+        img.set_colorkey((0,0,0))
     return img
 
-def load_images(path):
+def load_images(path,enemy=0):
+    """
+    Load and scale multiple images from a specified directory.
+
+    Args:
+        path (str): Directory path within the base directory containing images.
+
+    Returns:
+        list[pygame.Surface]: List of loaded and scaled images.
+    """
     images = []
     for img_name in sorted(os.listdir(BASE_IMG_PATH + path)):
-        images.append(load_image(path + '/' + img_name))
+        images.append(load_image(path + '/' + img_name, enemy))  # Scale each image to 30x30 pixels
     return images
+
 
 class Animation:
     def __init__(self, images, img_dur=5, loop=True):
