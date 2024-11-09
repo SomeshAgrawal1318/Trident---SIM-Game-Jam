@@ -1,66 +1,9 @@
 import pygame
-import sys
 from pygame import mixer
 from fighter import Fighter
 
-
-class Game:
-    def __init__(self):
-    
-        pygame.init()
-        WIDTH, HEIGHT = 640,480
-        pygame.display.set_caption('Zygos')
-        self.screen = pygame.display.set_mode((WIDTH,HEIGHT))
-        self.clock = pygame.time.Clock()
-
-        self.img = pygame.image.load('data/images/clouds/cloud_1.png')
-        self.img_pos = [160, 260]
-        self.img.set_colorkey((0,0,0))
-        self.movement = [False, False]
-
-        self.collision_area = pygame.Rect(50,50,300,50)
-    
-    def run(self):
-        while True:
-            self.screen.fill((14,219,248))
-            self.img_pos[1] += (self.movement[1] - self.movement[0])*5
-            self.screen.blit(self.img, self.img_pos)
-            self.clock.tick(60)
-
-            img_r = pygame.Rect(self.img_pos[0],self.img_pos[1], self.img.get_width(),self.img.get_height())
-            if img_r.colliderect(self.collision_area):
-                pygame.draw.rect(self.screen, (0,100,255), self.collision_area)
-            else:
-                 pygame.draw.rect(self.screen, (0,50,155), self.collision_area)
-            
-            for event in pygame.event.get():
-                
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-               
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP:
-                        self.movement[0] = True
-                    if event.key == pygame.K_DOWN:
-                        self.movement[1] = True
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_UP:
-                        self.movement[0] = False
-                    if event.key == pygame.K_DOWN:
-                        self.movement[1] = False             
-           
-           
-            pygame.display.update()
-
-Game().run()
-
-
-
-#Level 3
 mixer.init()
 pygame.init()
-
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
@@ -68,22 +11,18 @@ SCREEN_HEIGHT = 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Zygos rahhhhh (Keyboard dedo)")
 
-
 clock = pygame.time.Clock()
 FPS = 60
-
 
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
-
 
 intro_count = 3
 last_count_update = pygame.time.get_ticks()
 score = [0, 0]
 round_over = False
 ROUND_OVER_COOLDOWN = 2000
-
 
 WARRIOR_SIZE = 162
 WARRIOR_SCALE = 4
@@ -94,8 +33,7 @@ WIZARD_SCALE = 3
 WIZARD_OFFSET = [112, 107]
 WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 
-
-pygame.mixer.music.load("Assets/music_bakchodi.mp3")
+pygame.mixer.music.load("Assets/music.mp3")
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1, 0.0, 5000)
 sword_fx = pygame.mixer.Sound("Assets/sword_hit.mp3")
@@ -103,33 +41,26 @@ sword_fx.set_volume(0.5)
 magic_fx = pygame.mixer.Sound("Assets/magic.wav")
 magic_fx.set_volume(0.75)
 
-
 bg_image = pygame.image.load("Assets/Background.png").convert_alpha()
-
 
 warrior_sheet = pygame.image.load("Assets/Warrior/warrior.png").convert_alpha()
 wizard_sheet = pygame.image.load("Assets/Wizard/wizard.png").convert_alpha()
 
 victory = pygame.image.load("Assets/victory.png").convert_alpha()
 
-
 WARRIOR_ANIMATION_STEPS = [10, 8, 1, 7, 7, 3, 7]
 WIZARD_ANIMATION_STEPS = [8, 8, 1, 8, 8, 3, 7]
 
-
 count_font = pygame.font.Font("Assets/turok.ttf", 80)
 score_font = pygame.font.Font("Assets/turok.ttf", 30)
-
 
 def draw_text(text, font, text_col, x, y):
   img = font.render(text, True, text_col)
   screen.blit(img, (x, y))
 
-
 def draw_bg():
   scaled_bg = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
   screen.blit(scaled_bg, (0, 0))
-
 
 def draw_health_bar(health, x, y):
   ratio = health / 100
@@ -140,7 +71,6 @@ def draw_health_bar(health, x, y):
 
 fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
 fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
-
 
 run = True
 while run:
@@ -189,7 +119,6 @@ while run:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       run = False
-
 
   pygame.display.update()
 
