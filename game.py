@@ -2,6 +2,7 @@ import os
 import sys
 import math
 import random
+from zygos import lvl3
 
 import pygame
 
@@ -33,8 +34,8 @@ class Game:
             'player': load_image('entities/player.png'),
             'background': load_image('background.png'),
             'clouds': load_images('clouds'),
-            'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
-            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
+            'enemy/idle': Animation(load_images('entities/enemy/idle',1), img_dur=3),
+            'enemy/run': Animation(load_images('entities/enemy/run', 1), img_dur=3),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=6),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/jump': Animation(load_images('entities/player/jump')),
@@ -44,7 +45,7 @@ class Game:
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
             'gun': load_image('gun.png'),
             'projectile': load_image('projectile.png'),
-            #'diamond': load_image('diamond.png')
+            'diamond': load_image('diamond.png')
         }
         
         self.sfx = {
@@ -61,8 +62,7 @@ class Game:
         self.sfx['dash'].set_volume(0.3)
         self.sfx['jump'].set_volume(0.7)
 
-        #self.assets['diamond'] = pygame.transform.scale(self.assets['diamond'],
-                                                        #16, 16))  # Resize the diamond if needed
+        self.assets['diamond'] = pygame.transform.scale(self.assets['diamond'], (8, 8)) # Resize the diamond if needed
 
         self.clouds = Clouds(self.assets['clouds'], count=16)
         
@@ -71,8 +71,8 @@ class Game:
         self.tilemap = Tilemap(self, tile_size=16)
         
         self.level = 0
-        #self.diamonds = []
-        #self.collected_diamonds = 0
+        self.diamonds = []
+        self.collected_diamonds = 0
 
         self.load_level(self.level)
         
@@ -90,6 +90,8 @@ class Game:
 
     def load_level(self, map_id):
         if map_id > 1:
+            self.display_level_number(2)
+            lvl3()
             pygame.quit()
             sys.exit()
 
@@ -105,19 +107,15 @@ class Game:
         self.enemies = []
         enemy_spawners = self.tilemap.extract([('spawners', 0), ('spawners', 1)])
 
-        # Conditional check to reduce enemies for level 2
-        if map_id == 1:  # Assuming map_id 1 is level 2
-            enemy_spawners = enemy_spawners[:len(enemy_spawners) // 2]  # Reduce number of enemies by half
-
         for spawner in enemy_spawners:
             if spawner['variant'] == 0:
                 self.player.pos = spawner['pos']
                 self.player.air_time = 0
             else:
                 self.enemies.append(Enemy(self, spawner['pos'], (8, 15)))
-        #self.diamonds = []
-        #for diamond_pos in [(50, 150), (100, 100), (200, 50)]:  # Example positions for diamonds
-           # self.diamonds.append(pygame.Rect(diamond_pos[0], diamond_pos[1], 16, 16))
+        self.diamonds = []
+        for diamond_pos in [(50, 80), (100, 120), (200, 70)]:  # Example positions for diamonds
+           self.diamonds.append(pygame.Rect(diamond_pos[0], diamond_pos[1], 8, 8))
 
         self.projectiles = []
         self.particles = []
@@ -127,7 +125,7 @@ class Game:
         self.dead = 0
         self.transition = -30
 
-        #self.collected_diamonds = 0
+        self.collected_diamonds = 0
 
     def run(self):
         pygame.mixer.music.load('data/music.wav')
@@ -142,16 +140,18 @@ class Game:
             
             self.screenshake = max(0, self.screenshake - 1)
             
-            if not len(self.enemies):
+            if not len(self.enemies) and self.collected_diamonds >= 3:
                 self.transition += 1
-                if self.transition > 30 :#and self.collected_diamonds >= 3:
+                if self.transition > 30 and self.collected_diamonds >= 3:
                     self.level = self.level + 1
                     self.load_level(self.level)
+                    self.collected_diamonds = 0
             if self.transition < 0:
                 self.transition += 1
             
             if self.dead:
-                self.dead += 1
+                self.collected_diamonds = 0
+                self.dead += 10
                 if self.dead >= 10:
                     self.transition = min(30, self.transition + 1)
                 if self.dead > 40:
@@ -171,12 +171,12 @@ class Game:
             
             self.tilemap.render(self.display, offset=render_scroll)
 
-            #for diamond in self.diamonds.copy():
-                #self.display.blit(self.assets['diamond'], (diamond.x - render_scroll[0], diamond.y - render_scroll[1]))
-               # if self.player.rect().colliderect(diamond):
-                    #self.diamonds.remove(diamond)
-                   # self.collected_diamonds += 1
-                    #self.sfx['collect'].play()
+            for diamond in self.diamonds.copy():
+               self.display.blit(self.assets['diamond'], (diamond.x - render_scroll[0], diamond.y - render_scroll[1]))
+               if self.player.rect().colliderect(diamond):
+                   self.diamonds.remove(diamond)
+                   self.collected_diamonds += 1
+              
 
             for enemy in self.enemies.copy():
                 kill = enemy.update(self.tilemap, (0, 0))
